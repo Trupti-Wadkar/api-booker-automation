@@ -1,5 +1,6 @@
 package testscripts;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +11,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 public class DemoTest {
-	@Test
+	@Test(priority=1)
 	public void phoneNumbersTypeTest() {
 		RestAssured.baseURI = "https://0e686aed-6e36-4047-bcb4-a2417455c2d7.mock.pstmn.io";
 
@@ -22,8 +23,14 @@ public class DemoTest {
 		System.out.println(res.asPrettyString());
 		List<Object> listOfType = res.jsonPath().getList("phoneNumbers.type");
 		System.out.println(listOfType);		
+		List<String> expectedListOfType =new ArrayList<String>();
+		expectedListOfType.add("iPhone");
+		expectedListOfType.add("home");
+		Assert.assertEquals(listOfType, expectedListOfType);
+		/*boolean compareType=listOfType.equals(expectedListOfType);
+		System.out.println(compareType);*/
 	}
-
+	@Test(priority=2)
 	public void phoneNumbersTest() {
 		RestAssured.baseURI = "https://0e686aed-6e36-4047-bcb4-a2417455c2d7.mock.pstmn.io";
 

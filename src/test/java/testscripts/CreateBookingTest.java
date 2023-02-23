@@ -153,7 +153,53 @@ public class CreateBookingTest {
 		CreateBookingRequest responseBody= res.as(CreateBookingRequest.class);
 		Assert.assertTrue(responseBody.equals(payload));
 	}
+	
+	@Test(priority=4)
+	public void updatePartialBookingIdTest() {
+		payload.setFirstname("Ani");
+		payload.setLastname("Manglekars");
+		Response res=RestAssured.given()
+				.headers("Content-Type","application/json")
+				.headers("Accept","application/json")
+				.headers("Cookie", "token="+token)
+				.log().all()
+				.body(payload)
+				.when()
+				.patch("/booking/"+bookingId);
 
+		Assert.assertEquals(res.statusCode(), Status_Code.OK);
+		System.out.println(res.asPrettyString());
+		
+		CreateBookingRequest responseBody= res.as(CreateBookingRequest.class);
+		Assert.assertTrue(responseBody.equals(payload));
+	}
+
+	@Test(priority=5)
+	public void deleteBookingIdTest() {
+		Response res=RestAssured.given()
+				.headers("Content-Type","application/json")
+				.headers("Cookie", "token="+token)
+				.log().all()
+				.when()
+				.delete("/booking/"+bookingId);
+
+		Assert.assertEquals(res.statusCode(), Status_Code.CREATED);
+	}
+	
+	@Test(priority=6)
+	public void getDeletedBookingIdTest() {
+		Response res=RestAssured.given()
+				.headers("Accept","application/json")
+				.log().all() 
+				.when()
+				.get("/booking");
+
+		Assert.assertEquals(res.getStatusCode(), Status_Code.OK);
+		System.out.println(res.asPrettyString());
+		List<Integer> listOgBookingIds =res.jsonPath().getList("bookingid");
+		Assert.assertFalse((listOgBookingIds.contains(bookingId)));
+		
+	}
 	private void validateResponse(Response res,CreateBookingRequest payload,String object) {
 		Assert.assertEquals(res.jsonPath().getString(object+"firstname"),payload.getFirstname());
 		Assert.assertEquals(res.jsonPath().getString(object+"lastname"),payload.getLastname());
